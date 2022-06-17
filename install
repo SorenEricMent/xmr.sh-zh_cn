@@ -32,7 +32,7 @@ VERSION="v0.3.3"
 XMRSH_INSTALL_CMD="sudo bash -c \"\$(curl  -sLSf https://get.xmr.sh)\""
 XMRSH_DIR="/opt/xmr.sh"
 XMRSH_BRANCH="main"
-XMRSH_URL="https://github.com/vdo/xmr.sh"
+XMRSH_URL="https://github.com/SorenEricMent/xmr.sh-zh_cn"
 XMRSH_LOG_FILE="/tmp/xmr.sh-$(date +%Y%m%d-%H%M%S).log"
 DOCKER_INSTALLED=false
 DOCKER_COMPOSE_INSTALLED=false
@@ -56,30 +56,31 @@ header() {
     echo -e " >  <| | | | | | | _\__ \ | | |"
     echo -e "/_/\_\_| |_| |_|_|(_)___/_| |_|"
     echo -e "                 Version ${VERSION}${Off}\n"
+    echo -e "                 汉化BY Winslow SorenEricMent\n"
 }
 
 detect_root() {
-    echo -ne "${OkBullet}Checking root... ${Off}"
+    echo -ne "${OkBullet}检查Root权限... ${Off}"
     if [[ $EUID -ne 0 ]]; then
         echo -e "${Fail}"
-        echo -e "${ErrBullet}You need to run this script as root (UID=0).${Off}"
+        echo -e "${ErrBullet}你需要用Root权限运行本脚本(UID=0).${Off}"
         exit 1
     fi
     echo -e "${Ok}"
 }
 
 detect_pipe() {
-    echo -ne "${OkBullet}Checking script execution... ${Off}"
+    echo -ne "${OkBullet}检查脚本执行上下文... ${Off}"
     if [ -p /dev/stdin ]; then
         echo -e "${Fail}"
-        echo -e "${ErrBullet}This script can't be piped! Instead, use the command: ${XMRSH_INSTALL_CMD}${Off}"
+        echo -e "${ErrBullet}这个脚本不能通过管道执行！请用这个指令代替： ${XMRSH_INSTALL_CMD}${Off}"
         exit 1
     fi
     echo -e "${Ok}"
 }
 
 check_deps() {
-    echo -ne "${OkBullet}Checking and installing dependencies... ${Off}"
+    echo -ne "${OkBullet}检查并安装依赖... ${Off}"
     # shellcheck disable=SC2068
     for pkg in ${DEPENDENCIES[@]}; do
         if ! command -v "${pkg}" >>"${XMRSH_LOG_FILE}" 2>&1; then
@@ -98,25 +99,25 @@ install_pkg() {
     elif grep -q "fedora" /etc/os-release || grep -q "centos" /etc/os-release; then
         dnf install -y "$1" >>"${XMRSH_LOG_FILE}" 2>&1
     else
-        echo -e "${ErrBullet}Cannot detect your distribution package manager.${Off}"
+        echo -e "${ErrBullet}无法检测你的包管理器，您的系统不是Debian / Fedora / CentOS ? .${Off}"
         exit 1
     fi
 }
 
 detect_curl() {
-    echo -ne "${OkBullet}Checking curl... ${Off}"
+    echo -ne "${OkBullet}检查 curl... ${Off}"
     # docker --version >>"${XMRSH_LOG_FILE}" 2>&1 | grep -q "Docker version"
     if curl --version >>"${XMRSH_LOG_FILE}" 2>&1; then
         echo -e "${Ok}"
     else
         echo -e "${Nok}"
-        echo -e "${ErrBullet}Please install curl first.${Off}"
+        echo -e "${ErrBullet}请先安装curl.${Off}"
         exit 1
     fi
 }
 
 detect_docker() {
-    echo -ne "${OkBullet}Checking docker... ${Off}"
+    echo -ne "${OkBullet}检查 docker... ${Off}"
     if docker --version >>"${XMRSH_LOG_FILE}" 2>&1; then
         DOCKER_INSTALLED=true
         echo -e "${Ok}"
@@ -126,7 +127,7 @@ detect_docker() {
 }
 
 detect_docker_compose() {
-    echo -ne "${OkBullet}Checking docker compose... ${Off}"
+    echo -ne "${OkBullet}检查 docker compose... ${Off}"
     if docker-compose --version >>"${XMRSH_LOG_FILE}" 2>&1; then
         DOCKER_COMPOSE_INSTALLED=true
         echo -e "${Ok}"
@@ -136,7 +137,7 @@ detect_docker_compose() {
 }
 
 install_docker() {
-    echo -ne "${OkBullet}Installing docker... ${Off}"
+    echo -ne "${OkBullet}正在安装 docker... ${Off}"
     # Docker Installer as provided in
     curl -fsSL https://get.docker.com -o - | bash >>"${XMRSH_LOG_FILE}" 2>&1
     check_return $?
@@ -159,7 +160,7 @@ install_docker_compose() {
 }
 
 install_xmrsh() {
-    echo -ne "${OkBullet}Installing xmr.sh... ${Off}"
+    echo -ne "${OkBullet}正在安装 xmr.sh... ${Off}"
     if [ ! -d "$XMRSH_DIR" ]; then
         git clone -b "${XMRSH_BRANCH}" "${XMRSH_URL}" "${XMRSH_DIR}" >>"${XMRSH_LOG_FILE}" 2>&1
         check_return $?
@@ -168,15 +169,15 @@ install_xmrsh() {
         check_return $?
     else
         echo -e "${Ok}"
-        echo -e "${ErrBullet}Error: xmr.sh already present in ${XMRSH_DIR}. Run the uninstall script first."
+        echo -e "${ErrBullet}错误： xmr.sh 已经被安装于 ${XMRSH_DIR}了。请先执行卸载脚本。"
         exit 1
     fi
     echo -e "${Ok}"
 }
 
 configure_network() {
-    echo -e "${OkBullet}Select the desired node network (mainnet, testnet, stagenet)"
-    PS3=":: Enter a number: "
+    echo -e "${OkBullet}选择你想运行的节点网络类型 (主网(mainnet), 测试网(testnet), 镜像网(stagenet))"
+    PS3=":: 输入数字: "
     options=("mainnet" "testnet" "stagenet")
     select opt in "${options[@]}"; do
         case $opt in
@@ -227,7 +228,7 @@ configure_tls_domain() {
 }
 
 configure_tls_port() {
-    echo -e "${OkBullet}Enter the desired TLS/HTTPS port."
+    echo -e "${OkBullet}输入你想要的 TLS/HTTPS 端口。"
     read -r -e -p "   Leave empty to use the default [443]: " TLS_PORT
     if [ -n "${TLS_PORT}" ]; then
         while ! echo "${TLS_PORT}" | grep -qP '^([1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$'; do
@@ -266,15 +267,15 @@ configure_cors() {
             break
             ;;
         [Nn]*) break ;;
-        *) echo "   Please answer yes or no." ;;
+        *) echo "   请回答yes（是）或者no（否）。" ;;
         esac
     done
 }
 
 configure_tor() {
-    echo -e "${OkBullet}Configuring tor..."
+    echo -e "${OkBullet}配置 tor..."
     while true; do
-        read -r -e -p "   Do you want to enable a Tor hidden service? [y/n]: " yn
+        read -r -e -p "   你想启用Tor隐匿服务吗 [y/n]: " yn
         case $yn in
         [Yy]*)
             sed -i '/#!tor/s/# //g' docker-compose.yml
@@ -282,7 +283,7 @@ configure_tor() {
             break
             ;;
         [Nn]*) break ;;
-        *) echo "   Please answer yes or no." ;;
+        *) echo "   请回答yes（是）或者no（否）。" ;;
         esac
     done
 }
