@@ -1,16 +1,16 @@
 # xmr.sh
 
-**xmr.sh** script wizard sets up a new server running a monero node daemon with Docker compose, with your choice of SSL certificates for your domain, network selection, a Tor hidden service, Grafana dashboard and more.
+**xmr.sh** 脚本能够用Docker安装运行一个新的门罗节点服务器，您可以自己选择域名和配套的SSL证书，节点运行于的网络，暗网服务，Grafana监控面板，还有更多。
 
-## Distribution support
+## 发行版支持
 
-Compatible and tested on:
+与如下发行版兼容并且已经经过测试：
 
 - Debian 11
 - Ubuntu Focal
 - Fedora 36
 
-Other distributions with docker pre-installed would probably be compatible as well.
+其他预先安装了Docker的发行版一般也能兼容。
 
 ## Demo
 
@@ -18,7 +18,7 @@ Other distributions with docker pre-installed would probably be compatible as we
 
 ## FAQ
 
-Check the [wiki](https://github.com/vdo/xmr.sh/wiki/FAQ)
+请du [wiki](https://github.com/vdo/xmr.sh/wiki/FAQ)
 
 ## ToDo
 
@@ -39,12 +39,15 @@ Check the [wiki](https://github.com/vdo/xmr.sh/wiki/FAQ)
 - [ ] i2p service
 - [ ] p2pool mining
 
-# Credits
+# 作者
 
-[@cirocosta](https://github.com/cirocosta) for the metrics exporter and grafana dashboard.
+[@cirocosta](https://github.com/cirocosta) 提供了指标导出器和Grafana监控面板支持
 
-[@sethforprivacy](https://github.com/sethforprivacy) for providing and maintaining Monero Docker images.
+[@sethforprivacy](https://github.com/sethforprivacy) 提供并维护Docker镜像
 
-# Donate XMR 🍕
+# 给原作者捐赠 XMR 🍕
 
 86GwmtuKWtjJBWT8Srn4oqZHbP41k2kpG79xXKKgauJzCmZkFJ5ihwjVnRodVbVjAx64JeB7VyGbF6hEdwpcPcR7Go8x2YZ
+
+# 翻译
+由Winslow SorenEricMent(@SorenEricMent) 汉化
